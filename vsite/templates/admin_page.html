@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBartWeb : Admin</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* Custom CSS for centering */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            /* Add some spacing between tabs and tables */
+        }
+
+        .tabcontent {
+            display: none;
+        }
+
+        table {
+            margin: 0 auto;
+            /* Center the table */
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container justify-content-between"> <!-- Use Bootstrap's flexbox utilities -->
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="bi bi-palette-fill"></i> OBartWeb
+            </a>
+            <div>
+                
+                <a class="navbar-brand me-3" href="{% url 'add_video' %}"> <!-- Add margin to the right (me-3) -->
+                    <i class="fas fa-plus"></i>
+                </a>
+                <a class="navbar-brand me-3" href="{% url 'check_codes' %}"> <!-- Add margin to the right (me-3) -->
+                    <i class="fa fa-qrcode"></i>
+                </a>
+                <a class="navbar-brand" href="{% url 'logout' %}">
+                    Log-out
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <br>
+    <div class="tabs">
+        {% for chapter_number, videos in chapters.items %}
+        <button class="tablinks" onclick="openChapter(event, '{{ chapter_number }}')">
+            {{ chapter_number }}
+        </button>
+        {% endfor %}
+    </div>
+    
+   {% for chapter_number, videos in chapters.items %}
+    <div id="{{ chapter_number }}" class="tabcontent">
+        <h3 class="text-center">{{ chapter_number }}
+            {% for chapter_choice in CHAPTER_CHOICES %}
+                {% if chapter_choice.0 == chapter_number %}
+                    {{ chapter_choice.1 }}
+                {% endif %}
+            {% endfor %}
+        </h3>
+        <div class="table-responsive text-center">
+            <table class="table">
+                <thead>
+
+                    <tr>
+                        <th>Title</th>
+                        <th>Video URL</th>
+                        <th>Short Details</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for video in videos %}
+                        <tr>
+                            <td>{{ video.title }}</td>
+                            <td>{{ video.video.url }}</td>
+                            <td>{{ video.short_details }}</td>
+                            <td>
+                                <a href="{% url 'update_video' video.id %}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'delete_video' video.id %}">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endfor %}
+
+
+
+
+
+    <script>
+        function openChapter(evt, chapterNumber) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(chapterNumber).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+
+</html>
